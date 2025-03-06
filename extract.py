@@ -1,10 +1,15 @@
 import fitz  # PyMuPDF
+import os
+from dotenv import load_dotenv
 from supabase import create_client, Client
+
+
+load_dotenv()
 
 #extracts all the data from a pdf
 # Supabase credentials
-SUPABASE_URL = "REDACTED"
-SUPABASE_KEY = "REDACTED"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 def extract_text_from_pdf(pdf_path):
     """Extract text from a PDF file"""
