@@ -3,8 +3,8 @@ from supabase import create_client, Client
 
 #extracts all the data from a pdf
 # Supabase credentials
-SUPABASE_URL = "https://socrnumzdhcgdzutuezy.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNvY3JudW16ZGhjZ2R6dXR1ZXp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NDI5MDQsImV4cCI6MjA1NTUxODkwNH0.buHWVhRmNYXdZa-jSH4r3IM4xqFYqAt6oPGnI4Z_BjQ"
+SUPABASE_URL = "REDACTED"
+SUPABASE_KEY = "REDACTED"
 
 def extract_text_from_pdf(pdf_path):
     """Extract text from a PDF file"""
