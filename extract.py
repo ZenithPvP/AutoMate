@@ -3,10 +3,13 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
+
+load_dotenv()
+
 #extracts all the data from a pdf
 # Supabase credentials
-SUPABASE_URL = "REDACTED"
-SUPABASE_KEY = "REDACTED"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 def extract_text_from_pdf(pdf_path):
     """Extract text from a PDF file"""
@@ -29,5 +32,5 @@ def main(pdf_path):
     print("Upload successful")
 
 if __name__ == "__main__":
-    pdf_path = "honda_accord_2016_manual.pdf"  
+    pdf_path = "honda_accord_2015_manual.pdf"  
     main(pdf_path)
