@@ -1,3 +1,4 @@
 # AutoMate
 Mechanic Chabot that diagnoses common car problem. 
-Joseph 
+
+By: Elias Hannon, Eric Hurtado & Joseph Moreno
