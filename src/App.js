@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
+import axios from 'axios';
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -12,59 +13,84 @@ function App() {
   });
   const [isBotTyping, setIsBotTyping] = useState(false);
 
-  // Reset the chatbot to the initial state
+  // Show initial bot message on load
+  useEffect(() => {
+    setMessages([{ text: 'What is the make of your car?', sender: 'bot' }]);
+  }, []);
+
+  // Reset chatbot
   const restartChat = () => {
-    setMessages([]);
+    setMessages([{ text: 'What is the make of your car?', sender: 'bot' }]);
     setInput('');
     setStep(1);
     setCarDetails({ make: '', model: '', year: '' });
     setIsBotTyping(false);
   };
 
+  const handleCarDetailInput = (value) => {
+    if (!value.trim()) return;
+
+    const userMsg = { text: value, sender: 'user' };
+
+    if (step === 1) {
+      setCarDetails({ ...carDetails, make: value });
+      setMessages((prev) => [
+        ...prev,
+        userMsg,
+        { text: `What is the model of your ${value}?`, sender: 'bot' }
+      ]);
+      setStep(2);
+    } else if (step === 2) {
+      setCarDetails({ ...carDetails, model: value });
+      setMessages((prev) => [
+        ...prev,
+        userMsg,
+        { text: `What is the year of your ${carDetails.make} ${value}?`, sender: 'bot' }
+      ]);
+      setStep(3);
+    } else if (step === 3) {
+      setCarDetails({ ...carDetails, year: value });
+      setMessages((prev) => [
+        ...prev,
+        userMsg,
+        { text: 'Describe the problem with your car...', sender: 'bot' }
+      ]);
+      setStep(4);
+    }
+  };
+
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // Add user message
-    const newMessages = [...messages, { text: input, sender: 'user' }];
-    setMessages(newMessages);
+    const userMsg = { text: input, sender: 'user' };
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
-
-    // Simulate bot typing (delay)
     setIsBotTyping(true);
 
-    // Handle conversation flow with delay for bot typing animation
-    setTimeout(() => {
-      if (step === 1) {
-        setCarDetails(prev => ({ ...prev, make: input }));
-        setStep(2);
-        setMessages(prev => [
-          ...prev,
-          { text: `What is the model of your ${input}?`, sender: 'bot' }
-        ]);
-      } else if (step === 2) {
-        setCarDetails(prev => ({ ...prev, model: input }));
-        setStep(3);
-        setMessages(prev => [
-          ...prev,
-          { text: `What is the year of your ${carDetails.make} ${input}?`, sender: 'bot' }
-        ]);
-      } else if (step === 3) {
-        setCarDetails(prev => ({ ...prev, year: input }));
-        setStep(4);
-        setMessages(prev => [
-          ...prev,
-          { text: `Got it! What seems to be the problem with your ${carDetails.year} ${carDetails.make} ${carDetails.model}?`, sender: 'bot' }
-        ]);
-      } else {
-        setMessages(prev => [
-          ...prev,
-          { text: `You said: "${input}". Let me check...`, sender: 'bot' }
-        ]);
-      }
+    const prompt = `You are an automotive diagnostic assistant.The user has a ${carDetails.make} ${carDetails.model} ${carDetails.year}. 
+    What are the possible causes ${input} and what steps should they take to resolve it?
+    Please be specific and avoid irrelevant details.`;
+    console.log("Sending prompt:", prompt);
 
-      // Simulate bot typing finishing
+    try {
+      // Call local backend instead of hitting Hugging Face directly from frontend
+      const response = await axios.post(
+        'http://localhost:5000/api/chat',
+      { inputs: prompt }
+    );
+
+
+    const botMessage = response.data.message || 'Sorry, something went wrong.';
+    setMessages((prev) => [...prev, { text: botMessage, sender: 'bot' }]);
+    } catch (error) {
+      console.error('Error calling Hugging Face API:', error);
+      setMessages((prev) => [
+        ...prev,
+        { text: 'Sorry, something went wrong. Please try again.', sender: 'bot' },
+      ]);
+    } finally {
       setIsBotTyping(false);
-    }, 1500);  // Simulate bot thinking time (1.5 seconds)
+    }
   };
 
   return (
@@ -76,8 +102,6 @@ function App() {
             <strong>{msg.sender === 'user' ? 'You' : 'AutoMate'}:</strong> {msg.text}
           </div>
         ))}
-
-        {/* Typing animation */}
         {isBotTyping && (
           <div className="typing-indicator">
             <span className="dot">.</span>
@@ -90,17 +114,34 @@ function App() {
       <div className="input-row">
         <input
           value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && sendMessage()}
-          placeholder={step === 1 ? "What is the make of your car?" :
-                      step === 2 ? `What is the model of your ${carDetails.make}?` :
-                      step === 3 ? `What is the year of your ${carDetails.make} ${carDetails.model}?` :
-                      "Describe the problem with your car..."}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              if (step < 4) {
+                handleCarDetailInput(input);
+                setInput('');
+              } else {
+                sendMessage();
+              }
+            }
+          }}
+          placeholder="Type your response here..."
         />
-        <button onClick={sendMessage}>Send</button>
+        <button
+          type="button"
+          onClick={() => {
+            if (step < 4) {
+              handleCarDetailInput(input);
+              setInput('');
+            } else {
+              sendMessage();
+            }
+          }}
+        >
+          Send
+        </button>
       </div>
 
-      {/* Restart Button */}
       <div className="restart-button">
         <button onClick={restartChat}>Restart Chat</button>
       </div>
@@ -109,7 +150,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
