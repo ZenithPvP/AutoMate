@@ -67,23 +67,23 @@ function App() {
     setInput('');
     setIsBotTyping(true);
 
-    const prompt = `You are an automotive diagnostic assistant.The user has a ${carDetails.make} ${carDetails.model} ${carDetails.year}. 
-    What are the possible causes ${input} and what steps should they take to resolve it?
-    Please be specific and avoid irrelevant details.`;
+    const prompt = `You are an automotive diagnostic assistant. 
+    Give the top 3 most likely causes and solutions for a ${carDetails.make} ${carDetails.model} ${carDetails.year} where the user says: "${input}". 
+    Be specific and concise. Do not repeat the user’s message. Use bullet points and number each cause.`;
+
     console.log("Sending prompt:", prompt);
 
     try {
-      // Call local backend instead of hitting Hugging Face directly from frontend
-      const response = await axios.post(
-        'http://localhost:5000/api/chat',
-      { inputs: prompt }
-    );
+      const response = await axios.post('http://localhost:5000/api/chat', {
+        inputs: prompt
+      });
 
-
-    const botMessage = response.data.message || 'Sorry, something went wrong.';
-    setMessages((prev) => [...prev, { text: botMessage, sender: 'bot' }]);
+      // Check if the response is successful
+      console.log('Response from backend:', response);
+      const botMessage = response.data.message || 'Sorry, something went wrong.';
+      setMessages((prev) => [...prev, { text: botMessage, sender: 'bot' }]);
     } catch (error) {
-      console.error('Error calling Hugging Face API:', error);
+      console.error('Error calling Open AI API:', error.response?.data || error.message);
       setMessages((prev) => [
         ...prev,
         { text: 'Sorry, something went wrong. Please try again.', sender: 'bot' },
