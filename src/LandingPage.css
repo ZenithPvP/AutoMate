@@ -1,3 +1,52 @@
+.side-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem 1rem 1rem 1rem;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+  z-index: 10;
+}
+
+.menu-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.side-menu li {
+  margin-bottom: 1.2rem;
+}
+
+.side-menu a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: block;
+  transition: background 0.2s;
+}
+
+.side-menu a:hover {
+  background: rgba(255,255,255,0.12);
+}
+
 .landing-page {
   display: flex;
   flex-direction: column;
@@ -12,6 +61,15 @@
   padding: 2rem;
   background: transparent;
   box-sizing: border-box;
+}
+
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  z-index: 1;
 }
 
 .landing-page h1 {
@@ -76,6 +134,19 @@
 .account-icon img {
   width: 24px;
   height: 24px;
+}
+
+.automate-landing-icon {
+  width: 160px;
+  height: 160px;
+  margin-bottom: 2rem;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,122,255,0.10);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @keyframes fadeInDown {
