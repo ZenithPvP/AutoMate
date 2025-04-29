@@ -88,10 +88,12 @@ body {
 
 .message {
   margin: 1rem 0;
-  padding: 1rem;
+  padding: 1.2rem 1.4rem;
   border-radius: 15px;
-  max-width: 80%;
+  max-width: 85%;
   animation: fadeIn 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  line-height: 1.5;
 }
 
 @keyframes fadeIn {
@@ -107,7 +109,7 @@ body {
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-left-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,122,255,0.10);
+  box-shadow: 0 4px 12px rgba(0,122,255,0.25);
   font-size: 1.05rem;
   max-width: 70%;
 }
@@ -120,13 +122,60 @@ body {
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 6px;
-  box-shadow: 0 2px 8px rgba(34,34,34,0.10);
+  box-shadow: 0 4px 12px rgba(34,34,34,0.25);
   font-size: 1.05rem;
-  max-width: 70%;
+  max-width: 75%;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
 }
 
 .message strong {
   display: none;
+}
+
+/* Reason section styling */
+.reason-section {
+  margin-bottom: 22px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border-left: 4px solid #00d4ff;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.reason-section:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.reason-section:last-child {
+  margin-bottom: 10px;
+}
+
+.reason-section strong {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #00d4ff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-shadow: 0 0 5px rgba(0, 212, 255, 0.3);
+}
+
+.reason-section br {
+  display: block;
+  content: "";
+  margin-top: 10px;
+}
+
+/* Message content styling */
+.message.bot strong:not(:first-child) {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #00d4ff;
+  font-weight: 600;
 }
 
 .input-row {
@@ -330,5 +379,33 @@ body {
 }
 .confirm-no:hover {
   background: #ff7875;
+}
+
+/* Video link styling */
+.video-link {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.video-link a {
+  display: inline-block;
+  background-color: #ff0000; /* YouTube Red */
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none !important;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 0, 0, 0.3); /* Added red glow */
+  border: 2px solid white; /* Added white border for contrast */
+  font-size: 1.05rem; /* Slightly larger font */
+  letter-spacing: 0.5px; /* Better letter spacing for readability */
+}
+
+.video-link a:hover {
+  background-color: #cc0000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 0, 0, 0.4); /* Enhanced glow on hover */
 }
 
