@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import './Menu.css';
 import axios from 'axios';
@@ -16,8 +16,9 @@ function AppInner() {
   });
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [showHomeConfirm, setShowHomeConfirm] = useState(false);
+  const chatBoxRef = useRef(null);
 
   useEffect(() => {
     async function showInitialMessages() {
@@ -149,6 +150,18 @@ function AppInner() {
     setShowHomeConfirm(false);
   };
 
+  // Add function to scroll to bottom of chat
+  const scrollToBottom = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  };
+
+  // Scroll when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <div className="chat-app-layout">
       <SideMenu isOpen={menuOpen} onToggle={() => setMenuOpen((open) => !open)} onHomeClick={handleHomeClick} />
@@ -160,7 +173,7 @@ function AppInner() {
           </div>
         </header>
         <main className="chat-container">
-          <div className="chat-box">
+          <div className="chat-box" ref={chatBoxRef}>
             {messages.map((msg, i) => (
               <div key={`${msg.sender}-${i}`} className={`message ${msg.sender}`}>
                 {msg.sender === 'user' ? (
