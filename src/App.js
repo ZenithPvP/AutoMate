@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import './Menu.css';
 import axios from 'axios';
@@ -16,8 +16,9 @@ function AppInner() {
   });
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [showRestartConfirm, setShowRestartConfirm] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [showHomeConfirm, setShowHomeConfirm] = useState(false);
+  const chatBoxRef = useRef(null);
 
   useEffect(() => {
     async function showInitialMessages() {
@@ -100,13 +101,15 @@ function AppInner() {
 
     try {
       // Await the API call first
-      const response = await axios.post('http://localhost:5000/api/chat', {
+      const response = await axios.post('http://localhost:5001/api/chat', {
         inputs: prompt
       });
       if (response.data.error) {
         throw new Error(response.data.error);
       }
+      
       const botMessage = response.data.message;
+      
       // Wait 2 seconds after API responds
       await new Promise((resolve) => setTimeout(resolve, typingDelay));
       setMessages((prev) => [...prev, { text: botMessage, sender: 'bot' }]);
@@ -147,6 +150,18 @@ function AppInner() {
     setShowHomeConfirm(false);
   };
 
+  // Add function to scroll to bottom of chat
+  const scrollToBottom = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  };
+
+  // Scroll when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <div className="chat-app-layout">
       <SideMenu isOpen={menuOpen} onToggle={() => setMenuOpen((open) => !open)} onHomeClick={handleHomeClick} />
@@ -158,10 +173,25 @@ function AppInner() {
           </div>
         </header>
         <main className="chat-container">
-          <div className="chat-box">
+          <div className="chat-box" ref={chatBoxRef}>
             {messages.map((msg, i) => (
               <div key={`${msg.sender}-${i}`} className={`message ${msg.sender}`}>
-                <strong>{msg.sender === 'user' ? 'You' : 'AutoMate'}:</strong> {msg.text}
+                {msg.sender === 'user' ? (
+                  <>
+                    <strong>You:</strong> {msg.text}
+                  </>
+                ) : (
+                  <>
+                    <strong>AutoMate:</strong> 
+                    <div dangerouslySetInnerHTML={{ 
+                      __html: msg.text
+                        .replace(/\n(\d+)\.\s*REASON:/g, '<div class="reason-section"><strong>REASON $1:</strong>')
+                        .replace(/\nEXPLANATION:/g, '<br/><strong>EXPLANATION:</strong>')
+                        .replace(/\nVIDEO:\s*\[(.*?)\]\((https:\/\/www\.youtube\.com\/.*?)\)/g, '<br/><strong>VIDEO:</strong><div class="video-link"><a href="$2" target="_blank">▶️ $1</a></div></div>')
+                        .replace(/\n/g, '<br/>')
+                    }} />
+                  </>
+                )}
               </div>
             ))}
             {isBotTyping && (
